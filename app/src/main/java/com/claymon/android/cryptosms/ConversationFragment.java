@@ -1,7 +1,10 @@
 package com.claymon.android.cryptosms;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +31,6 @@ public class ConversationFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
     public static ConversationFragment newInstance(String param1, String param2) {
         ConversationFragment fragment = new ConversationFragment();
         Bundle args = new Bundle();
@@ -72,21 +74,65 @@ public class ConversationFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-        }
+        //Get the conversations.
 
+        Uri smsUri = Uri.parse("content://mms-sms/conversations");
+
+        Cursor mCursor = getActivity().getContentResolver().query(smsUri, new
+                String[] { "_id", "thread_id", "address", "person", "date"},
+                null, null, null);
+
+        getActivity().startManagingCursor(mCursor);
 
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-        for (int i = 0; i < names.length; i++){
-            HashMap<String, String> hm = new HashMap<String, String>();
-            hm.put("name", names[i]);
-            hm.put("photo", Integer.toString(photos[i]));
-            aList.add(hm);
+        if(mCursor.getCount() > 0){
+            String count = Integer.toString(mCursor.getCount());
+            while(mCursor.moveToNext()){
+                String address = mCursor.getString(mCursor.getColumnIndex("address"));
+                String person = mCursor.getString(mCursor.getColumnIndex("person"));
+
+                HashMap<String, String> hm = new HashMap<>();
+                if(person == null){
+                    //Person is null, use address instead.
+                    hm.put("person", address);
+                    hm.put("photo", Integer.toString(R.id.contactPhoto));
+                    hm.put("knownContact", "false");
+                }
+                else{
+                    hm.put("person", person);
+                    hm.put("photo", Integer.toString(R.id.contactPhoto));
+                    hm.put("knownContact", "true");
+                }
+
+                aList.add(hm);
+            }
+        }
+
+        //System.err.println("aList size is: " + aList.size());
+        //Get the contact photo, if the contact exists.
+        for(int j = 0; j < aList.size(); j++){
+            String[] stats = getContactPhoto(aList.get(j).get("person"));
+
+            if(stats[0] == null){
+               //No contact entry. Just display phone number.
+                aList.get(j).put("photo", Integer.toString(R.drawable.contact_default));
+            }
+            else{
+                //Contact found. Display name and phone number.
+                aList.get(j).remove("person");
+                aList.get(j).put("person", stats[0]);
+                if(stats[1] != null) {
+                    aList.get(j).put("photo", stats[1]);
+                }
+                else{
+                    aList.get(j).put("photo", Integer.toString(R.drawable.contact_default));
+                }
+            }
         }
 
         //Keys
-        String[] from = {"name", "photo"};
+        String[] from = {"person", "photo"};
 
         //IDs of views in conversations_layout_list.
         int[] to = {R.id.contactName, R.id.contactPhoto};
@@ -94,6 +140,29 @@ public class ConversationFragment extends ListFragment {
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.conversations_layout_list, from, to);
 
         setListAdapter(adapter);
+    }
+
+    public String[] getContactPhoto(String number){
+        Uri mUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, number);
+        Cursor mCursor = getActivity().getContentResolver()
+                .query(mUri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI}, null, null, null);
+
+        String mName = null;
+        String mPhotoUri = null;
+
+        getActivity().startManagingCursor(mCursor);
+
+        if(mCursor.getCount() > 0){
+            while(mCursor.moveToNext()){
+                //This is the contact. Get their name and photo.
+                mName = mCursor.getString(mCursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+                mPhotoUri = mCursor.getString(mCursor.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_THUMBNAIL_URI));
+
+                System.err.println("Photo Uri is: " + mPhotoUri);
+            }
+        }
+
+        return new String[] {mName, mPhotoUri};
     }
 
 
