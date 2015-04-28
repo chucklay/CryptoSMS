@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">CryptoSMS</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_conversations_container">ConversationsContainer</string>
+    <string name="title_activity_fragment_container">FragmentContainer</string>
+
+    <!--Welcome strings-->
+    <string name="welcome_title">Welcome To CryptoSMS!</string>
+    <string name="welcome_message">Before you get started, we need to take care of a few things on
+    our end. Don\'t worry, the process is totally automated. Just press the get started button, and
+    we\'ll have you up and running in no time. If you\'d like to know the details, check our website!
+    </string>
+    <string name="get_started_button">Get Started!</string>
+
+</resources>

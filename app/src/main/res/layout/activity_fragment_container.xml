@@ -1,0 +1,13 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.claymon.android.cryptosms.FragmentContainer">
+
+    <fragment
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/conversations_fragment"
+        android:name="com.claymon.android.cryptosms.ConversationFragment"/>
+
+</RelativeLayout>
