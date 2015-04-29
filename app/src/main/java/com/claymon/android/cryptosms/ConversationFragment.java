@@ -25,9 +25,8 @@ import java.util.List;
  */
 public class ConversationFragment extends ListFragment {
 
-    //Array of names. Debug.
-    String[] names = new String[] {"Alice", "Bob", "Charlie", "Danny", "etc"};
-    int[] photos = new int[] {R.drawable.contact_default,R.drawable.contact_default,R.drawable.contact_default,R.drawable.contact_default,R.drawable.contact_default};
+    //Array of names.
+    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
     private OnFragmentInteractionListener mListener;
 
@@ -84,8 +83,6 @@ public class ConversationFragment extends ListFragment {
 
         getActivity().startManagingCursor(mCursor);
 
-        List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-
         if(mCursor.getCount() > 0){
             String count = Integer.toString(mCursor.getCount());
             while(mCursor.moveToNext()){
@@ -98,11 +95,13 @@ public class ConversationFragment extends ListFragment {
                     hm.put("person", address);
                     hm.put("photo", Integer.toString(R.id.contactPhoto));
                     hm.put("knownContact", "false");
+                    hm.put("number", address);
                 }
                 else{
                     hm.put("person", person);
                     hm.put("photo", Integer.toString(R.id.contactPhoto));
                     hm.put("knownContact", "true");
+                    hm.put("number", address);
                 }
 
                 aList.add(hm);
@@ -119,7 +118,7 @@ public class ConversationFragment extends ListFragment {
                 aList.get(j).put("photo", Integer.toString(R.drawable.contact_default));
             }
             else{
-                //Contact found. Display name and phone number.
+                //Contact found. Display name and photo.
                 aList.get(j).remove("person");
                 aList.get(j).put("person", stats[0]);
                 if(stats[1] != null) {
@@ -191,7 +190,8 @@ public class ConversationFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(names[position]);
+
+            mListener.onFragmentInteraction(aList.get(position).get("number"));
         }
     }
 

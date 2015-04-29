@@ -13,5 +13,7 @@
     we\'ll have you up and running in no time. If you\'d like to know the details, check our website!
     </string>
     <string name="get_started_button">Get Started!</string>
+    <string name="title_activity_thread_container">ThreadContainer</string>
+    <string name="send">Send</string>
 
 </resources>

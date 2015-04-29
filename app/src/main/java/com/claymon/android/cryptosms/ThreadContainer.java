@@ -1,6 +1,5 @@
 package com.claymon.android.cryptosms;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -8,21 +7,19 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
-public class FragmentContainer extends ActionBarActivity implements ConversationFragment.OnFragmentInteractionListener {
+public class ThreadContainer extends ActionBarActivity implements MessageFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment_container);
-
-        setTitle(R.string.app_name);
+        setContentView(R.layout.activity_thread_container);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fragment_container, menu);
+        getMenuInflater().inflate(R.menu.menu_thread_container, menu);
         return true;
     }
 
@@ -43,12 +40,7 @@ public class FragmentContainer extends ActionBarActivity implements Conversation
 
     @Override
     public void onFragmentInteraction(String id) {
-        Toast mToast = Toast.makeText(this, "Not yet implemented. ID is " + id, Toast.LENGTH_SHORT);
+        Toast mToast = Toast.makeText(getApplicationContext(), "Not yet implemented.", Toast.LENGTH_SHORT);
         mToast.show();
-
-        Intent launchThreadContainer = new Intent(getApplicationContext(), ThreadContainer.class);
-        launchThreadContainer.putExtra("number", id);
-
-        startActivity(launchThreadContainer);
     }
 }
