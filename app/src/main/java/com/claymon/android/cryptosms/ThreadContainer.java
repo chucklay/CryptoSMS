@@ -13,6 +13,8 @@ public class ThreadContainer extends ActionBarActivity implements MessageFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thread_container);
+        //TODO Check to see if this number has an associated contact.
+        setTitle(getIntent().getStringExtra("number"));
     }
 
 

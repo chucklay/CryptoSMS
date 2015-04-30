@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
 public class FragmentContainer extends ActionBarActivity implements ConversationFragment.OnFragmentInteractionListener {
@@ -42,12 +41,10 @@ public class FragmentContainer extends ActionBarActivity implements Conversation
     }
 
     @Override
-    public void onFragmentInteraction(String id) {
-        Toast mToast = Toast.makeText(this, "Not yet implemented. ID is " + id, Toast.LENGTH_SHORT);
-        mToast.show();
-
+    public void onFragmentInteraction(String[] id) {
         Intent launchThreadContainer = new Intent(getApplicationContext(), ThreadContainer.class);
-        launchThreadContainer.putExtra("number", id);
+        launchThreadContainer.putExtra("number", id[1]);
+        launchThreadContainer.putExtra("thread_id", id[0]);
 
         startActivity(launchThreadContainer);
     }

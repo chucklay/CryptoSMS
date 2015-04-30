@@ -78,7 +78,7 @@ public class ConversationFragment extends ListFragment {
         Uri smsUri = Uri.parse("content://mms-sms/conversations");
 
         Cursor mCursor = getActivity().getContentResolver().query(smsUri, new
-                String[] { "_id", "thread_id", "address", "person", "date"},
+                        String[]{"_id", "thread_id", "address", "person", "date"},
                 null, null, null);
 
         getActivity().startManagingCursor(mCursor);
@@ -88,6 +88,7 @@ public class ConversationFragment extends ListFragment {
             while(mCursor.moveToNext()){
                 String address = mCursor.getString(mCursor.getColumnIndex("address"));
                 String person = mCursor.getString(mCursor.getColumnIndex("person"));
+                String thread_id = mCursor.getString(mCursor.getColumnIndex("thread_id"));
 
                 HashMap<String, String> hm = new HashMap<>();
                 if(person == null){
@@ -96,12 +97,14 @@ public class ConversationFragment extends ListFragment {
                     hm.put("photo", Integer.toString(R.id.contactPhoto));
                     hm.put("knownContact", "false");
                     hm.put("number", address);
+                    hm.put("thread_id", thread_id);
                 }
                 else{
                     hm.put("person", person);
                     hm.put("photo", Integer.toString(R.id.contactPhoto));
                     hm.put("knownContact", "true");
                     hm.put("number", address);
+                    hm.put("thread_id", thread_id);
                 }
 
                 aList.add(hm);
@@ -191,7 +194,7 @@ public class ConversationFragment extends ListFragment {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
 
-            mListener.onFragmentInteraction(aList.get(position).get("number"));
+            mListener.onFragmentInteraction(new String[]{aList.get(position).get("thread_id"), aList.get(position).get("number")});
         }
     }
 
@@ -207,7 +210,7 @@ public class ConversationFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(String[] id);
     }
 
 }
