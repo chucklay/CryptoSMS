@@ -22,7 +22,11 @@
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/sendButton"
         android:layout_toStartOf="@+id/sendButton"
-        android:inputType="text"/>
+        android:inputType="text|textMultiLine"
+        android:focusable="true"
+        android:maxLines="4"
+        android:maxLength="2000"
+        android:scrollHorizontally="false"/>
 
     <Button
         android:layout_width="wrap_content"

@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
+import com.claymon.android.cryptosms.classes.CryptoMessage;
+import com.claymon.android.cryptosms.classes.MessageAdapter;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,18 +73,7 @@ public class MessageFragment extends ListFragment {
 
             MergeCursor mCursor = new MergeCursor(new Cursor[]{mInboxCursor, mOutboxCursor});
 
-            /*
-            if(mCursor.getCount() > 0){
-                while(mCursor.moveToNext()){
-                    HashMap<String, String> hm = new HashMap<>();
-
-                    hm.put("body", mCursor.getString(mCursor.getColumnIndex("body")));
-                    hm.put("date", mCursor.getString(mCursor.getColumnIndex("date")));
-
-                    messageList.add(hm);
-                }
-            }
-            */
+            ArrayList<CryptoMessage> mMessages = new ArrayList<>();
 
             int mTotal = mInboxCursor.getCount() + mOutboxCursor.getCount();
 
@@ -90,12 +83,16 @@ public class MessageFragment extends ListFragment {
                 if(!mInboxCursor.moveToNext()){
                     //If the inbox cursor cannot be moved to next, take from the outbox.
                     while(mOutboxCursor.moveToNext()){
-                        HashMap<String, String> hm = new HashMap<>();
+                        CryptoMessage current;
+                        String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
+                        String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
 
-                        hm.put("body", mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body")));
-                        hm.put("date", mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date")));
+                        Date formattedDate = new Date(Long.parseLong(date));
+                        String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
 
-                        messageList.add(hm);
+                        current = new CryptoMessage(message, formattedDateString, true);
+
+                        mMessages.add(current);
                     }
                     break;
                 }
@@ -103,20 +100,30 @@ public class MessageFragment extends ListFragment {
                     //If the outbox cursor cannot be moved to next, take from the inbox.
 
                     //Add the current first, as the above if statement will have moved it once already.
-                    HashMap<String, String> hm1 = new HashMap<>();
+                    CryptoMessage current1;
 
-                    hm1.put("body", mInboxCursor.getString(mInboxCursor.getColumnIndex("body")));
-                    hm1.put("date", mInboxCursor.getString(mInboxCursor.getColumnIndex("date")));
+                    String message1 = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
+                    String date1 = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
 
-                    messageList.add(hm1);
+                    Date formattedDate1 = new Date(Long.parseLong(date1));
+                    String formattedDateString1 = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate1);
+
+                    current1 = new CryptoMessage(message1, formattedDateString1, false);
+
+                    mMessages.add(current1);
 
                     while(mInboxCursor.moveToNext()){
-                        HashMap<String, String> hm = new HashMap<>();
+                        CryptoMessage current;
 
-                        hm.put("body", mInboxCursor.getString(mInboxCursor.getColumnIndex("body")));
-                        hm.put("date", mInboxCursor.getString(mInboxCursor.getColumnIndex("date")));
+                        String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
+                        String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
 
-                        messageList.add(hm);
+                        Date formattedDate = new Date(Long.parseLong(date));
+                        String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
+
+                        current = new CryptoMessage(message, formattedDateString, false);
+
+                        mMessages.add(current);
                     }
                     break;
                 }
@@ -125,30 +132,40 @@ public class MessageFragment extends ListFragment {
                     long inDate = Long.parseLong(mInboxCursor.getString(mInboxCursor.getColumnIndex("date")));
                     long outDate = Long.parseLong(mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date")));
 
-                    HashMap<String, String> hm = new HashMap<>();
+                    CryptoMessage current;
 
                     if(inDate < outDate){
-                        hm.put("body", mInboxCursor.getString(mInboxCursor.getColumnIndex("body")));
-                        hm.put("date", mInboxCursor.getString(mInboxCursor.getColumnIndex("date")));
+                        String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
+                        String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
 
-                        //Do this to prevent the cursor from being advanced needlessly.
+                        Date formattedDate = new Date(Long.parseLong(date));
+                        String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
+
+                        current = new CryptoMessage(message, formattedDateString, false);
+
+                        //Do this to prevent the other cursor from being advanced incorrectly.
                         mOutboxCursor.moveToPrevious();
                     }
                     else{
-                        hm.put("body", mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body")));
-                        hm.put("date", mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date")));
+                        String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
+                        String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
 
+                        Date formattedDate = new Date(Long.parseLong(date));
+                        String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
+
+                        current = new CryptoMessage(message, formattedDateString, true);
+
+                        //Do this to prevent the other cursor from being advanced incorrectly.
                         mInboxCursor.moveToPrevious();
                     }
 
-                    messageList.add(hm);
+                    mMessages.add(current);
                 }
             }
 
-            String[] from = {"body", "date"};
-            int[] to = {R.id.recievedMessageText, R.id.recievedTimestampText};
+            MessageAdapter mAdapter = new MessageAdapter(getActivity(), R.layout.recieved_message, mMessages);
 
-            setListAdapter(new SimpleAdapter(getActivity().getBaseContext(), messageList, R.layout.recieved_message, from, to));
+            setListAdapter(mAdapter);
         }
     }
 
