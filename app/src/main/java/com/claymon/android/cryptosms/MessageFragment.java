@@ -28,6 +28,7 @@ import java.util.List;
 public class MessageFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
+    int total = 0;
 
     List<HashMap<String, String>> messageList = new ArrayList<HashMap<String, String>>();
 
@@ -44,6 +45,21 @@ public class MessageFragment extends ListFragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public MessageFragment() {
+    }
+
+    /**
+     * Attach to list view once the view hierarchy has been created.
+     *
+     * @param view
+     * @param savedInstanceState
+     */
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(total > 0) {
+            setSelection(total - 1);
+        }
     }
 
     @Override
@@ -75,17 +91,21 @@ public class MessageFragment extends ListFragment {
 
             ArrayList<CryptoMessage> mMessages = new ArrayList<>();
 
-            int mTotal = mInboxCursor.getCount() + mOutboxCursor.getCount();
+            int mInboxTotal = 0;            //Total number of inbox messages read.
+            int mOutboxTotal = 0;           //Total number of outbox messages read.
 
-            System.err.println("mTotal is: " + mTotal);
+            total = mInboxCursor.getCount() + mOutboxCursor.getCount();
 
-            for(int i = 0; i < mTotal; i++){
-                if(!mInboxCursor.moveToNext()){
+            while(mInboxTotal < mInboxCursor.getCount() || mOutboxTotal < mOutboxCursor.getCount()){
+                if(mInboxTotal == mInboxCursor.getCount()){
                     //If the inbox cursor cannot be moved to next, take from the outbox.
+                    System.err.println("No more messages in the inbox. Inbox count is " + mInboxTotal + "and outbox total is " + mOutboxTotal);
                     while(mOutboxCursor.moveToNext()){
                         CryptoMessage current;
                         String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
                         String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
+
+                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -93,30 +113,22 @@ public class MessageFragment extends ListFragment {
                         current = new CryptoMessage(message, formattedDateString, true);
 
                         mMessages.add(current);
+                        mOutboxTotal++;
                     }
+                    mInboxTotal = mInboxCursor.getCount();
+                    mOutboxTotal = mOutboxCursor.getCount();
                     break;
                 }
-                else if(!mOutboxCursor.moveToNext()){
+                else if(mOutboxTotal == mOutboxCursor.getCount()){
                     //If the outbox cursor cannot be moved to next, take from the inbox.
-
-                    //Add the current first, as the above if statement will have moved it once already.
-                    CryptoMessage current1;
-
-                    String message1 = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
-                    String date1 = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
-
-                    Date formattedDate1 = new Date(Long.parseLong(date1));
-                    String formattedDateString1 = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate1);
-
-                    current1 = new CryptoMessage(message1, formattedDateString1, false);
-
-                    mMessages.add(current1);
-
+                    System.err.println("No more messages in the outbox. Inbox count is " + mInboxTotal + "and outbox total is " + mOutboxTotal);
                     while(mInboxCursor.moveToNext()){
                         CryptoMessage current;
 
                         String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
                         String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
+
+                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -124,11 +136,17 @@ public class MessageFragment extends ListFragment {
                         current = new CryptoMessage(message, formattedDateString, false);
 
                         mMessages.add(current);
+                        mInboxTotal++;
                     }
+                    mInboxTotal = mInboxCursor.getCount();
+                    mOutboxTotal = mOutboxCursor.getCount();
                     break;
                 }
 
                 else{
+                    mInboxCursor.moveToNext();
+                    mOutboxCursor.moveToNext();
+
                     long inDate = Long.parseLong(mInboxCursor.getString(mInboxCursor.getColumnIndex("date")));
                     long outDate = Long.parseLong(mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date")));
 
@@ -138,6 +156,8 @@ public class MessageFragment extends ListFragment {
                         String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
                         String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
 
+                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
+
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
 
@@ -145,10 +165,13 @@ public class MessageFragment extends ListFragment {
 
                         //Do this to prevent the other cursor from being advanced incorrectly.
                         mOutboxCursor.moveToPrevious();
+                        mInboxTotal++;
                     }
                     else{
                         String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
                         String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
+
+                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -157,13 +180,14 @@ public class MessageFragment extends ListFragment {
 
                         //Do this to prevent the other cursor from being advanced incorrectly.
                         mInboxCursor.moveToPrevious();
+                        mOutboxTotal++;
                     }
 
                     mMessages.add(current);
                 }
             }
 
-            MessageAdapter mAdapter = new MessageAdapter(getActivity(), R.layout.recieved_message, mMessages);
+            MessageAdapter mAdapter = new MessageAdapter(getActivity(), mMessages);
 
             setListAdapter(mAdapter);
         }
@@ -195,6 +219,8 @@ public class MessageFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
+
+            mListener.onFragmentInteraction(position + "");
         }
     }
 

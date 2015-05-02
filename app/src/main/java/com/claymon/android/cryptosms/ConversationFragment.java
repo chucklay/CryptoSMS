@@ -79,34 +79,24 @@ public class ConversationFragment extends ListFragment {
 
         Cursor mCursor = getActivity().getContentResolver().query(smsUri, new
                         String[]{"_id", "thread_id", "address", "person", "date"},
-                null, null, null);
+                null, null, "date DESC");
 
         getActivity().startManagingCursor(mCursor);
 
         if(mCursor.getCount() > 0){
             String count = Integer.toString(mCursor.getCount());
-            while(mCursor.moveToNext()){
+            while(mCursor.moveToNext()) {
                 String address = mCursor.getString(mCursor.getColumnIndex("address"));
                 String person = mCursor.getString(mCursor.getColumnIndex("person"));
                 String thread_id = mCursor.getString(mCursor.getColumnIndex("thread_id"));
 
                 HashMap<String, String> hm = new HashMap<>();
-                if(person == null){
-                    //Person is null, use address instead.
-                    hm.put("person", address);
-                    hm.put("photo", Integer.toString(R.id.contactPhoto));
-                    hm.put("knownContact", "false");
-                    hm.put("number", address);
-                    hm.put("thread_id", thread_id);
-                }
-                else{
-                    hm.put("person", person);
-                    hm.put("photo", Integer.toString(R.id.contactPhoto));
-                    hm.put("knownContact", "true");
-                    hm.put("number", address);
-                    hm.put("thread_id", thread_id);
-                }
-
+                //Person is null, use address instead.
+                hm.put("person", address);
+                hm.put("photo", Integer.toString(R.id.contactPhoto));
+                hm.put("knownContact", "false");
+                hm.put("number", address);
+                hm.put("thread_id", thread_id);
                 aList.add(hm);
             }
         }
@@ -142,6 +132,7 @@ public class ConversationFragment extends ListFragment {
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.conversations_layout_list, from, to);
 
         setListAdapter(adapter);
+
     }
 
     public String[] getContactPhoto(String number){

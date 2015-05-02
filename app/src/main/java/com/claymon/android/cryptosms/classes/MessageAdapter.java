@@ -12,23 +12,30 @@ import com.claymon.android.cryptosms.R;
 import java.util.ArrayList;
 
 /**
- * Created by Charlie on 4/30/2015.
+ * Created by Charlie on 5/2/2015.
  */
 public class MessageAdapter extends ArrayAdapter {
 
-    private ArrayList<CryptoMessage> items;
+    ArrayList<CryptoMessage> mMessages = new ArrayList<>();
 
-    /**
-     * Constructor
-     *
-     * @param context  The current context.
-     * @param resource The resource ID for a layout file containing a TextView to use when
-     *                 instantiating views.
-     * @param objects  The objects to represent in the ListView.
-     */
-    public MessageAdapter(Context context, int resource, ArrayList<CryptoMessage> objects) {
-        super(context, resource, objects);
-        this.items = objects;
+    public MessageAdapter(Context context, ArrayList<CryptoMessage> messages){
+        super(context, 0, messages);
+        mMessages = messages;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mMessages.get(position).isSent()){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
     }
 
     /**
@@ -40,47 +47,38 @@ public class MessageAdapter extends ArrayAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
+        CryptoMessage current = (CryptoMessage) getItem(position);
 
-        if(v == null){
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            CryptoMessage current = items.get(position);
-
+        if(convertView == null){
             if(current.isSent()){
-                //This was a sent message, use the appropriate view.
-                v = inflater.inflate(R.layout.sent_message, null);
-
-                //Set up the views.
-                TextView sentMessage = (TextView) v.findViewById(R.id.sentMessageText);
-                TextView sentDate = (TextView) v.findViewById(R.id.sentMessageDate);
-
-                if(sentMessage != null){
-                    sentMessage.setText(current.getMessage());
-                }
-
-                if(sentDate != null){
-                    sentDate.setText(current.getDate());
-                }
+                //This is message that the user sent. Inflate the view for a sent message.
+                LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+                convertView = mInflater.inflate(R.layout.sent_message, parent, false);
             }
             else{
-                //This was a received message, use the appropriate view.
-                v = inflater.inflate(R.layout.recieved_message, null);
-
-                //Set up the views
-                TextView receivedMessage = (TextView) v.findViewById(R.id.recievedMessageText);
-                TextView receivedDate = (TextView) v.findViewById(R.id.recievedTimestampText);
-
-                if(receivedMessage != null){
-                    receivedMessage.setText(current.getMessage());
-                }
-
-                if(receivedDate != null){
-                    receivedDate.setText(current.getDate());
-                }
+                //Otherwise, this is a message that the user received. Inflate the view for a received message.
+                LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
+                convertView = mInflater.inflate(R.layout.recieved_message, parent, false);
             }
         }
 
-        return v;
+        if(current.isSent()){
+            //The current message is a sent message. Get the resources from the sent view.
+            TextView body = (TextView) convertView.findViewById(R.id.sentMessageText);
+            TextView date = (TextView) convertView.findViewById(R.id.sentMessageDate);
+
+            //Populate the data.
+            body.setText(current.getMessage());
+            date.setText(current.getDate());
+        }
+        else{
+            TextView body = (TextView) convertView.findViewById(R.id.recievedMessageText);
+            TextView date = (TextView) convertView.findViewById(R.id.recievedTimestampText);
+
+            body.setText(current.getMessage());
+            date.setText(current.getDate());
+        }
+
+        return convertView;
     }
 }

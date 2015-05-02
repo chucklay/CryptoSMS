@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/sendButton"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -26,7 +27,9 @@
         android:focusable="true"
         android:maxLines="4"
         android:maxLength="2000"
-        android:scrollHorizontally="false"/>
+        android:scrollHorizontally="false"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"/>
 
     <Button
         android:layout_width="wrap_content"

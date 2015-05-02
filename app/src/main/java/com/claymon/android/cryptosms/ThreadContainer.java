@@ -1,6 +1,9 @@
 package com.claymon.android.cryptosms;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +17,16 @@ public class ThreadContainer extends ActionBarActivity implements MessageFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thread_container);
         //TODO Check to see if this number has an associated contact.
-        setTitle(getIntent().getStringExtra("number"));
+        String number = getIntent().getStringExtra("number");
+        Uri mUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+        String[] query = new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME};
+        Cursor mCursor = this.getContentResolver().query(mUri, query, null, null, null);
+
+        if(mCursor.moveToFirst()){
+            number = mCursor.getString(0);
+        }
+
+        setTitle(number);
     }
 
 
@@ -42,7 +54,7 @@ public class ThreadContainer extends ActionBarActivity implements MessageFragmen
 
     @Override
     public void onFragmentInteraction(String id) {
-        Toast mToast = Toast.makeText(getApplicationContext(), "Not yet implemented.", Toast.LENGTH_SHORT);
+        Toast mToast = Toast.makeText(getApplicationContext(), id, Toast.LENGTH_SHORT);
         mToast.show();
     }
 }
