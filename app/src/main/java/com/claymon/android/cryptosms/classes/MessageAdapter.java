@@ -39,6 +39,24 @@ public class MessageAdapter extends ArrayAdapter {
     }
 
     /**
+     * Adds the specified object at the end of the array.
+     *
+     * @param message The object to add at the end of the array.
+     */
+    public void add(CryptoMessage message) {
+        mMessages.add(message);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param position

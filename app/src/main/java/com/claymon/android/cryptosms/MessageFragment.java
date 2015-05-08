@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.claymon.android.cryptosms.classes.CryptoMessage;
@@ -29,6 +30,7 @@ public class MessageFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
     int total = 0;
+    MessageAdapter mAdapter;
 
     List<HashMap<String, String>> messageList = new ArrayList<HashMap<String, String>>();
 
@@ -45,6 +47,14 @@ public class MessageFragment extends ListFragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public MessageFragment() {
+    }
+
+    /**
+     * Get the ListAdapter associated with this activity's ListView.
+     */
+    @Override
+    public ListAdapter getListAdapter() {
+        return mAdapter;
     }
 
     /**
@@ -99,13 +109,10 @@ public class MessageFragment extends ListFragment {
             while(mInboxTotal < mInboxCursor.getCount() || mOutboxTotal < mOutboxCursor.getCount()){
                 if(mInboxTotal == mInboxCursor.getCount()){
                     //If the inbox cursor cannot be moved to next, take from the outbox.
-                    System.err.println("No more messages in the inbox. Inbox count is " + mInboxTotal + "and outbox total is " + mOutboxTotal);
                     while(mOutboxCursor.moveToNext()){
                         CryptoMessage current;
                         String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
                         String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
-
-                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -121,14 +128,11 @@ public class MessageFragment extends ListFragment {
                 }
                 else if(mOutboxTotal == mOutboxCursor.getCount()){
                     //If the outbox cursor cannot be moved to next, take from the inbox.
-                    System.err.println("No more messages in the outbox. Inbox count is " + mInboxTotal + "and outbox total is " + mOutboxTotal);
                     while(mInboxCursor.moveToNext()){
                         CryptoMessage current;
 
                         String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
                         String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
-
-                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -156,8 +160,6 @@ public class MessageFragment extends ListFragment {
                         String message = mInboxCursor.getString(mInboxCursor.getColumnIndex("body"));
                         String date = mInboxCursor.getString(mInboxCursor.getColumnIndex("date"));
 
-                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
-
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
 
@@ -170,8 +172,6 @@ public class MessageFragment extends ListFragment {
                     else{
                         String message = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("body"));
                         String date = mOutboxCursor.getString(mOutboxCursor.getColumnIndex("date"));
-
-                        System.err.println("Adding message: " + message + " at position: " + mMessages.size());
 
                         Date formattedDate = new Date(Long.parseLong(date));
                         String formattedDateString = new SimpleDateFormat("MMM dd, hh:mm").format(formattedDate);
@@ -187,11 +187,13 @@ public class MessageFragment extends ListFragment {
                 }
             }
 
-            MessageAdapter mAdapter = new MessageAdapter(getActivity(), mMessages);
+            mAdapter = new MessageAdapter(getActivity(), mMessages);
 
             setListAdapter(mAdapter);
         }
     }
+
+
 
 
     @Override
