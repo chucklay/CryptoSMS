@@ -35,6 +35,8 @@ public class ThreadContainer extends ActionBarActivity implements MessageFragmen
         setContentView(R.layout.activity_thread_container);
         String name = "";
         final String number = getIntent().getStringExtra("number");
+
+        System.err.println("Opening conversation with " + number);
         Uri mUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
         String[] query = new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME};
         Cursor mCursor = this.getContentResolver().query(mUri, query, null, null, null);
