@@ -13,7 +13,17 @@
     we\'ll have you up and running in no time. If you\'d like to know the details, check our website!
     </string>
     <string name="get_started_button">Get Started!</string>
+
+    <!--Used by the main conversations view and the individual conversation view.-->
     <string name="title_activity_thread_container">ThreadContainer</string>
     <string name="send">Send</string>
+
+    <!--Used in the settings-->
+    <string name="settings_notification_title">Notification Settings</string>
+    <string name="notifications_on_title">Enable notifications</string>
+    <string name="notifications_vibration_on_title">Enable vibration</string>
+    <string name="notifications_vibration_on_summary">If enabled, will vibrate your device when a new message is received.</string>
+    <string name="notifications_sound_on_title">Enable sound</string>
+    <string name="notifications_sound_on_summary">If enabled, your device will make a noise when a new message is received.</string>
 
 </resources>

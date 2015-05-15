@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.claymon.android.cryptosms.classes.CryptoMessage;
 import com.claymon.android.cryptosms.classes.MessageAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -103,7 +105,9 @@ public class ThreadContainer extends ActionBarActivity implements MessageFragmen
         //Add the message to the conversation, and scroll to the bottom.
         ListFragment fragment = (ListFragment) getSupportFragmentManager().findFragmentById(R.id.thread_container);
         MessageAdapter mAdapter = (MessageAdapter) fragment.getListAdapter();
-        mAdapter.add(new CryptoMessage(message, Long.toString(System.currentTimeMillis()), true));
+        Date date = new Date(System.currentTimeMillis());
+        String currentTime = new SimpleDateFormat("MMM dd, hh:mm").format(date);
+        mAdapter.add(new CryptoMessage(message, currentTime, true));
         mAdapter.notifyDataSetChanged();
         fragment.getListView().smoothScrollToPosition(mAdapter.getCount()-1);
 

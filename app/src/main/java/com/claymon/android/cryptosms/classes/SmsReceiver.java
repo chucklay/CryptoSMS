@@ -5,9 +5,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -18,6 +21,11 @@ import com.claymon.android.cryptosms.ThreadContainer;
 public class SmsReceiver extends BroadcastReceiver {
 
     final SmsManager manager = SmsManager.getDefault();
+    private SharedPreferences preferences;
+
+    boolean mShowNotification;
+    boolean mVibrate;
+    boolean mSound;
 
     public SmsReceiver() {
     }
@@ -25,8 +33,13 @@ public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final Bundle bundle = intent.getExtras();
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        System.err.println("Broadcast received!");
+         mShowNotification = preferences.getBoolean("notifications_on", true);
+         mVibrate = preferences.getBoolean("notifications_vibration_on", true);
+         mSound= preferences.getBoolean("notifications_sound_on", true);
+
+        System.err.println("Broadcast received! Notifications on: " + mShowNotification + ", Vibrations on: " + mVibrate + ", Sound on: " + mSound);
 
         try{
             if(bundle != null){
@@ -60,7 +73,9 @@ public class SmsReceiver extends BroadcastReceiver {
                     }
 
                     //Show a notification.
-                    showNotification(incomingNumber, message, thread_id, context);
+                    if(mShowNotification) {
+                        showNotification(incomingNumber, message, thread_id, context);
+                    }
                 }
             }
         } catch (Exception e){
@@ -70,20 +85,68 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void showNotification(String incomingNumber, String message, String thread_id, Context context) {
-        NotificationCompat.Builder mBuilder;
+        NotificationCompat.Builder mBuilder = null;
         if(message.length() > 60) {
-            mBuilder =
-                    new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.contact_default)
-                            .setContentTitle("Incoming Message")
-                            .setContentText(message.substring(0, 60));      //TODO get contact name, if possible.
+            if(mVibrate && mSound) {
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message.substring(0, 60))
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                                .setAutoCancel(true)
+                                .setVibrate(new long[]{100, 50, 100});      //TODO get contact name, if possible.
+            }
+            else if(mVibrate){
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message.substring(0, 60))
+                                .setAutoCancel(true)
+                                .setSound(null)
+                                .setVibrate(new long[]{100, 50, 100});      //TODO get contact name, if possible.
+            }
+            else if(mSound){
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message.substring(0, 60))
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                                .setAutoCancel(true);      //TODO get contact name, if possible.
+            }
         }
         else{
-            mBuilder =
-                    new NotificationCompat.Builder(context)
-                    .setSmallIcon(R.drawable.contact_default)
-                    .setContentTitle("Incoming Message")
-                    .setContentText(message);
+            if(mSound && mVibrate) {
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message)
+                                .setAutoCancel(true)
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                                .setVibrate(new long[]{100, 50, 100}); //TODO get personalized contact notification sound.
+            }
+            else if(mSound){
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message)
+                                .setAutoCancel(true)
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)); //TODO get personalized contact notification sound.
+            }
+            else if(mVibrate){
+                mBuilder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle("Incoming Message")
+                                .setContentText(message)
+                                .setAutoCancel(true)
+                                .setSound(null)
+                                .setVibrate(new long[]{100, 50, 100}); //TODO get personalized contact notification sound.
+            }
         }
         Intent resultIntent = new Intent(context, ThreadContainer.class);
 

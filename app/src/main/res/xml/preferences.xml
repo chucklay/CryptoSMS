@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <PreferenceCategory
+        android:title="@string/settings_notification_title"
+        android:key="notification_settings">
+
+        <CheckBoxPreference
+            android:key="notifications_on"
+            android:title="@string/notifications_on_title"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="notifications_vibration_on"
+            android:title="@string/notifications_vibration_on_title"
+            android:summary="@string/notifications_vibration_on_summary"
+            android:defaultValue="true"
+            android:dependency="notifications_on"/>
+        <CheckBoxPreference
+            android:key="notifications_sound_on"
+            android:title="@string/notifications_sound_on_title"
+            android:summary="@string/notifications_sound_on_summary"
+            android:defaultValue="true"
+            android:dependency="notifications_on"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

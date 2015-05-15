@@ -15,7 +15,9 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
     <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -41,17 +43,30 @@
         </activity>
         <activity
             android:name=".ThreadContainer"
-            android:label="@string/title_activity_thread_container" >
+            android:label="@string/title_activity_thread_container"
+            android:windowSoftInputMode="adjustPan" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.claymon.android.cryptosms.FragmentContainer" />
         </activity>
 
         <receiver
             android:name=".classes.SmsReceiver"
             android:enabled="true"
             android:exported="true" >
-            <intent-filter android:priority="5585">
+            <intent-filter android:priority="5585" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".FragmentContainer" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.claymon.android.cryptosms.FragmentContainer" />
+        </activity>
     </application>
 
 </manifest>

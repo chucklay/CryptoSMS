@@ -34,6 +34,8 @@ public class FragmentContainer extends ActionBarActivity implements Conversation
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent gotoSettings = new Intent(this, SettingsActivity.class);
+            startActivity(gotoSettings);
             return true;
         }
 
