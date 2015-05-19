@@ -1,6 +1,8 @@
 package com.claymon.android.cryptosms;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
@@ -20,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list messages. This makes up an individual conversation.
  * <p/>
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
@@ -67,14 +69,16 @@ public class MessageFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(total > 0) {
-            setSelection(total - 1);
-        }
     }
 
+    /**
+     * Called when the Fragment is visible to the user.  This is generally
+     * tied to {@link Activity#onStart() Activity.onStart} of the containing
+     * Activity's lifecycle.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
         String mPhoneNumber = getActivity().getIntent().getStringExtra("number");
         String mThreadId = getActivity().getIntent().getStringExtra("thread_id");
@@ -191,6 +195,21 @@ public class MessageFragment extends ListFragment {
 
             setListAdapter(mAdapter);
         }
+
+        if(total > 0) {
+            setSelection(total - 1);
+        }
+
+        //If a notification for this conversation exists, close it.
+        int notificationId = (int) Long.parseLong(mPhoneNumber)-1000000000;
+        System.err.println("Attempting to dismiss notification with ID: " + notificationId);
+        NotificationManager notificationManager = (NotificationManager) getActivity().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(notificationId);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
 

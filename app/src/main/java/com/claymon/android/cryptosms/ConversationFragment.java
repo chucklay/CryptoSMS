@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list conversations. This will display all conversations present.
  * <p/>
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}

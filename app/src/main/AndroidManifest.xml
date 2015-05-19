@@ -44,6 +44,7 @@
         <activity
             android:name=".ThreadContainer"
             android:label="@string/title_activity_thread_container"
+            android:parentActivityName=".FragmentContainer"
             android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -62,7 +63,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".FragmentContainer" >
+            android:parentActivityName=".FragmentContainer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.claymon.android.cryptosms.FragmentContainer" />

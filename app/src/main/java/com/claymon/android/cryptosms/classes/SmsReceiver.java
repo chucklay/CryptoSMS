@@ -41,11 +41,15 @@ public class SmsReceiver extends BroadcastReceiver {
 
         System.err.println("Broadcast received! Notifications on: " + mShowNotification + ", Vibrations on: " + mVibrate + ", Sound on: " + mSound);
 
+
+
         try{
             if(bundle != null){
                 final Object[] pdusArray = (Object[]) bundle.get("pdus");
 
                 for(int i=0; i < pdusArray.length; i++){
+
+                    System.err.println("Looping through PDUs array.");
 
                     //Get message contents.
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusArray[i]);
@@ -74,9 +78,23 @@ public class SmsReceiver extends BroadcastReceiver {
 
                     //Show a notification.
                     if(mShowNotification) {
-                        showNotification(incomingNumber, message, thread_id, context);
+                        if(preferences.getString("current", null) != null) {
+                            if(!preferences.getString("current", "-1").equals(incomingNumber)) {
+                                showNotification(incomingNumber, message, thread_id, context);
+                            }
+                            else {
+                                System.err.println("Preferences string matches current number! Both are" + preferences.getString("current", "") + incomingNumber);
+                            }
+                        }
+                        else {
+                            System.err.println("Preferences string is null, showing notification.");
+                            showNotification(incomingNumber, message, thread_id, context);
+                        }
                     }
                 }
+            }
+            else{
+                System.err.println("error: bundle was null.");
             }
         } catch (Exception e){
             System.err.println("Error retrieving SMS: " + e);
@@ -85,6 +103,7 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void showNotification(String incomingNumber, String message, String thread_id, Context context) {
+        System.err.println("showNotification called!");
         NotificationCompat.Builder mBuilder = null;
         if(message.length() > 60) {
             if(mVibrate && mSound) {
@@ -152,8 +171,9 @@ public class SmsReceiver extends BroadcastReceiver {
 
         resultIntent.putExtra("number", incomingNumber);
         resultIntent.putExtra("thread_id", thread_id);
+        int notificationId = (int) Long.parseLong(incomingNumber)-1000000000;
 
-        PendingIntent resultPendingIntent =
+                PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         context,
                         0,
@@ -161,11 +181,13 @@ public class SmsReceiver extends BroadcastReceiver {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
+        System.err.println("Notification ID is: " + notificationId);
+
         mBuilder.setContentIntent(resultPendingIntent);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         //Issue the notification
-        mNotificationManager.notify(1, mBuilder.build());
+        mNotificationManager.notify(notificationId, mBuilder.build());
     }
 }
