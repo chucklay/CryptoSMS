@@ -38,6 +38,11 @@ public class FragmentContainer extends ActionBarActivity implements Conversation
             startActivity(gotoSettings);
             return true;
         }
+        else if(id == R.id.action_new_message){
+            Intent gotoNewMessage = new Intent(this, NewMessageActivity.class);
+            startActivity(gotoNewMessage);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

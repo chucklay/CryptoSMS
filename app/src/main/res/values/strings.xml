@@ -17,6 +17,12 @@
     <!--Used by the main conversations view and the individual conversation view.-->
     <string name="title_activity_thread_container">ThreadContainer</string>
     <string name="send">Send</string>
+    <string name="action_new_message">New Message</string>
+    <string name="destination_hint">To</string>
+    <string name="new_message_hint">New Message</string>
+    <string name="new_message_title">New Message</string>
+    <string name="empty_message">Unable to send a message with no content</string>
+    <string name="empty_recipient">Unable to send a message with no recipient</string>
 
     <!--Used in the settings-->
     <string name="settings_notification_title">Notification Settings</string>
@@ -25,5 +31,6 @@
     <string name="notifications_vibration_on_summary">If enabled, will vibrate your device when a new message is received.</string>
     <string name="notifications_sound_on_title">Enable sound</string>
     <string name="notifications_sound_on_summary">If enabled, your device will make a noise when a new message is received.</string>
+    <string name="title_activity_new_message">NewMessageActivity</string>
 
 </resources>

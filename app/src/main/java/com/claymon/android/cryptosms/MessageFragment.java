@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A fragment representing a list messages. This makes up an individual conversation.
+ * A fragment representing a list of messages. This makes up an individual conversation.
  * <p/>
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
