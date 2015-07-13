@@ -6,7 +6,6 @@
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
         android:ems="10"
         android:id="@+id/destination_number"
         android:layout_alignParentTop="true"
@@ -14,7 +13,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:hint="@string/destination_hint"/>
+        android:hint="@string/destination_hint"
+        android:layout_margin="16dp"
+        android:inputType="textCapWords|textPersonName"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -25,7 +26,9 @@
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/send_new"
         android:layout_toStartOf="@+id/send_new"
-        android:hint="@string/new_message_hint"/>
+        android:hint="@string/new_message_hint"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="6dp"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -34,5 +37,7 @@
         android:id="@+id/send_new"
         android:layout_alignTop="@+id/new_message"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginRight="16dp"/>
 </RelativeLayout>

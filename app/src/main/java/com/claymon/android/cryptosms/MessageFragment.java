@@ -36,7 +36,6 @@ public class MessageFragment extends ListFragment {
 
     List<HashMap<String, String>> messageList = new ArrayList<HashMap<String, String>>();
 
-    // TODO: Rename and change types of parameters
     public static MessageFragment newInstance(String param1, String param2) {
         MessageFragment fragment = new MessageFragment();
         Bundle args = new Bundle();
@@ -190,6 +189,9 @@ public class MessageFragment extends ListFragment {
                     mMessages.add(current);
                 }
             }
+
+            mInboxCursor.close();
+            mOutboxCursor.close();
 
             mAdapter = new MessageAdapter(getActivity(), mMessages);
 
