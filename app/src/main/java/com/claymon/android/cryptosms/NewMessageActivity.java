@@ -55,15 +55,15 @@ public class NewMessageActivity extends ActionBarActivity {
 
         CompleteCursorAdapter mAdapter = new CompleteCursorAdapter(NewMessageActivity.this, nameCursor, false);
 
-        nameCursor.close();
+        //nameCursor.close();
 
         FilterQueryProvider filter = new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
-                String query = "(instr(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME +
-                        ", '" + constraint + "') > 0 OR instr(" +
+                String query = "(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME +
+                        " LIKE '%" + constraint + "%' OR " +
                         ContactsContract.CommonDataKinds.Phone.NUMBER
-                        + ", '" + constraint + "') > 0) AND " + ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER + "> 0";
+                        + " LIKE '%" + constraint + "%') AND " + ContactsContract.CommonDataKinds.Phone.HAS_PHONE_NUMBER + "> 0";
 
                 return cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                         new String[]{ContactsContract.CommonDataKinds.Phone._ID, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.TYPE},

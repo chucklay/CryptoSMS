@@ -56,7 +56,15 @@
             android:enabled="true"
             android:exported="true" >
             <intent-filter android:priority="5585" >
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.provider.Telephony.SMS_RECIEVED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".classes.MmsReciever"
+                  android:permission="android.permission.BROADCAST_WAP_PUSH">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
+                <data android:mimeType="application/vnd.wap.mms-message" />
             </intent-filter>
         </receiver>
 
